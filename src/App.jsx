@@ -1,122 +1,66 @@
-import { useState } from 'react'
-import heroImg from './assets/hero.png'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import './App.css'
+import { useState } from 'react';
+import IrritantForm from './components/IrritantForm';
+import IrritantGraph from './components/IrritantGraph';
 
 function App() {
-  const [count, setCount] = useState(0)
+  // Gestion de l'onglet actif : 'graph' ou 'form'
+  const [activeTab, setActiveTab] = useState('graph');
+
+  // État global pour stocker la liste des irritants
+  const [irritants, setIrritants] = useState([
+    { id: 1, code: "IRR-001", qui: "Charles", date: "2026-10-20", desc: "Exemple d'irritant", impact: "Moyen", solution: "Faire une app React", statut: "en cours", x: 6, y: 5 }
+  ]);
 
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
+    <div style={{ fontFamily: 'Arial, sans-serif', maxWidth: '1200px', margin: '0 auto', padding: '20px' }}>
+      <header style={{ textAlign: 'center', marginBottom: '30px' }}>
+        <h1>Fiche et Tableau de Suivi des Irritants UAG</h1>
+        
+        {/* Barre de navigation */}
+        <nav style={{ display: 'flex', justifyContent: 'center', gap: '15px', marginTop: '20px' }}>
+          <button type='button'
+            onClick={() => setActiveTab('graph')}
+            style={{
+              padding: '12px 24px',
+              fontSize: '16px',
+              fontWeight: 'bold',
+              cursor: 'pointer',
+              backgroundColor: activeTab === 'graph' ? '#007bff' : '#f0f0f0',
+              color: activeTab === 'graph' ? '#fff' : '#333',
+              border: '1px solid #ccc',
+              borderRadius: '5px'
+            }}
+          >
+            📊 Graphique / Matrice
+          </button>
+          <button type='button'
+            onClick={() => setActiveTab('form')}
+            style={{
+              padding: '12px 24px',
+              fontSize: '16px',
+              fontWeight: 'bold',
+              cursor: 'pointer',
+              backgroundColor: activeTab === 'form' ? '#007bff' : '#f0f0f0',
+              color: activeTab === 'form' ? '#fff' : '#333',
+              border: '1px solid #ccc',
+              borderRadius: '5px'
+            }}
+          >
+            📝 Nouveau Formulaire
+          </button>
+        </nav>
+      </header>
 
-      <div className="ticks"></div>
-
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
-
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
-  )
+      {/* Affichage conditionnel de la fenêtre active */}
+      <main style={{ marginTop: '20px' }}>
+        {activeTab === 'graph' ? (
+          <IrritantGraph irritants={irritants} />
+        ) : (
+          <IrritantForm setIrritants={setIrritants} irritants={irritants} setActiveTab={setActiveTab} />
+        )}
+      </main>
+    </div>
+  );
 }
 
-export default App
+export default App;
