@@ -39,7 +39,7 @@ function IrritantForm({ setActiveTab }) {
             id_utilisateur: 1
         };
 
-        fetch('http://localhost:5000/api/irritants', {
+        fetch('http://localhost:5001/api/irritants', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
