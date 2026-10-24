@@ -1,12 +1,10 @@
 import { useState } from 'react';
 import html2pdf from 'html2pdf.js';
 
-function IrritantForm({ setIrritants, irritants, setActiveTab }) {
-    const nextId = irritants.length > 0 ? Math.max(...irritants.map(i => i.id)) + 1 : 1;
-    const generatedCode = `IRR-${String(nextId).padStart(3, '0')}`;
-
-    const [formData, setFormData] = useState({
-        code: generatedCode,
+function IrritantForm({ setActiveTab }) {
+    // Initialisation paresseuse : exécutée une seule fois au montage
+    const [formData, setFormData] = useState(() => ({
+        code: `IRR-${Math.floor(100 + Math.random() * 900)}`,
         date: new Date().toISOString().split('T')[0],
         qui: '',
         description: '',
@@ -17,7 +15,7 @@ function IrritantForm({ setIrritants, irritants, setActiveTab }) {
         statut: 'Non commencé',
         x: 5,
         y: 5
-    });
+    }));
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -25,8 +23,38 @@ function IrritantForm({ setIrritants, irritants, setActiveTab }) {
             alert("Veuillez renseigner au moins la description de l'irritant.");
             return;
         }
-        setIrritants([...irritants, { ...formData, id: nextId }]);
-        setActiveTab('graph');
+
+       const payload = {
+            code: formData.code,
+            date: formData.date,
+            qui: formData.qui,
+            description: formData.description,
+            impact: formData.impact,
+            traitement: formData.traitement,
+            prise_en_charge: formData.priseEnCharge,
+            solution: formData.solution,
+            statut: formData.statut,
+            score_impact: formData.y,
+            score_facilite: formData.x,
+            id_utilisateur: 1
+        };
+
+        fetch('http://localhost:5000/api/irritants', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(payload)
+        })
+        .then(response => {
+            if (response.ok) {
+                alert("Fiche enregistrée sur le serveur avec succès !");
+                setActiveTab('graph');
+            } else {
+                alert("Erreur lors de l'enregistrement sur le serveur.");
+            }
+        })
+        .catch(error => console.error("Erreur réseau :", error));
     };
 
     const handleDownloadPDF = () => {
@@ -50,10 +78,8 @@ function IrritantForm({ setIrritants, irritants, setActiveTab }) {
     return (
         <div style={{ maxWidth: '700px', margin: '0 auto', fontFamily: 'Arial, sans-serif' }}>
 
-            {/* Conteneur exporté en PDF */}
             <div id="fiche-uag-container" style={{ background: '#fff', border: '2px solid #2b2b2b', paddingBottom: '10px' }}>
 
-                {/* En-tête de la fiche */}
                 <div style={{ display: 'flex', borderBottom: '2px solid #2b2b2b', background: '#c1d7ae' }}>
                     <div style={{ flex: 2, padding: '15px', borderRight: '2px solid #2b2b2b', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                         <h2 style={{ margin: 0, fontSize: '20px', textTransform: 'uppercase', textAlign: 'center', color: '#1d3557' }}>
@@ -66,7 +92,6 @@ function IrritantForm({ setIrritants, irritants, setActiveTab }) {
                     </div>
                 </div>
 
-                {/* Formulaire de saisie */}
                 <div style={{ padding: '20px' }}>
 
                     <div style={{ display: 'flex', gap: '15px', marginBottom: '15px' }}>
@@ -144,6 +169,7 @@ function IrritantForm({ setIrritants, irritants, setActiveTab }) {
                             ))}
                         </div>
                     </div>
+
                 </div>
             </div>
 

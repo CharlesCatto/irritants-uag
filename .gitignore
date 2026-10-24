@@ -27,3 +27,6 @@ Thumbs.db
 *.sln
 *.sw?
 
+# Sécurité Backend
+backend/.env
+backend/node_modules/

@@ -105,7 +105,7 @@ function IrritantGraph({ irritants }) {
                     if (item.statut === 'En cours' || item.statut === 'en cours') statusColor = '#f5a623'; // Orange : en cours
                     if (item.statut === 'Terminé' || item.statut === 'Terminer') statusColor = '#2a9d8f'; // Vert : terminé
 
-                    return (
+return (
                         <button
                             key={item.id}
                             type="button"
