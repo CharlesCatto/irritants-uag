@@ -1,29 +1,12 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import IrritantForm from './components/IrritantForm';
 import IrritantGraph from './components/IrritantGraph';
-import IrritantSearch from './components/IrritantSearch'; // Import du nouveau composant
+import IrritantSearch from './components/IrritantSearch';
+import { initialIrritants } from './data/mockData';
 
 function App() {
   const [activeTab, setActiveTab] = useState('graph');
-  const [irritants, setIrritants] = useState([]);
-
-  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
-  useEffect(() => {
-    fetch('http://localhost:5001/api/irritants')
-      .then(response => response.json())
-      .then(data => {
-        const formatData = data.map(item => ({
-          ...item,
-          id: item.id_irritant,
-          code: item.code || `IRR-${String(item.id_irritant).slice(-3)}`,
-          x: item.score_facilite,
-          y: item.score_impact,
-          qui: item.qui || 'Collaborateur'
-        }));
-        setIrritants(formatData);
-      })
-      .catch(error => console.error("Erreur de récupération des données :", error));
-  }, [activeTab]);
+  const [irritants, setIrritants] = useState(initialIrritants);
 
   return (
     <div style={{ fontFamily: 'Arial, sans-serif', maxWidth: '1200px', margin: '0 auto', padding: '20px' }}>
