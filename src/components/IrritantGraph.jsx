@@ -94,39 +94,46 @@ function IrritantGraph({ irritants }) {
 
                 {/* --- POSITIONNEMENT DYNAMIQUE DES IRRITANTS --- */}
                 {irritants.map((item) => {
+                    const idKey = item.id_irritant || item.id;
+                    
+                    // Récupération des scores avec fallback
+                    const scoreX = Number(item.score_facilite ?? item.x ?? 5);
+                    const scoreY = Number(item.score_impact ?? item.y ?? 5);
+
                     // Conversion des notes sur 10 en pourcentages
-                    // Une marge de sécurité évite que les pastilles soient coupées sur les bords
                     const paddingSafety = 8;
-                    const leftPercent = paddingSafety + (item.x / 10) * (100 - paddingSafety * 2);
-                    const bottomPercent = paddingSafety + (item.y / 10) * (100 - paddingSafety * 2);
+                    const leftPercent = paddingSafety + (scoreX / 10) * (100 - paddingSafety * 2);
+                    const bottomPercent = paddingSafety + (scoreY / 10) * (100 - paddingSafety * 2);
 
-                    // Couleur de la pastille selon le statut actuel
+                    // Couleur de la pastille selon le statut
                     let statusColor = '#e63946'; // Rouge : non commencé
-                    if (item.statut === 'En cours' || item.statut === 'en cours') statusColor = '#f5a623'; // Orange : en cours
-                    if (item.statut === 'Terminé' || item.statut === 'Terminer') statusColor = '#2a9d8f'; // Vert : terminé
+                    if (item.statut === 'En cours' || item.statut === 'en cours') statusColor = '#f5a623'; // Orange
+                    if (item.statut === 'Terminé' || item.statut === 'Terminer') statusColor = '#2a9d8f'; // Vert
 
-return (
+                    const isSelected = selectedIrritant && (selectedIrritant.id_irritant || selectedIrritant.id) === idKey;
+
+                    return (
                         <button
-                            key={item.id}
+                            key={idKey}
                             type="button"
-                            onClick={() => setSelectedIrritant(selectedIrritant?.id === item.id ? null : item)}
+                            onClick={() => setSelectedIrritant(isSelected ? null : item)}
                             style={{
                                 position: 'absolute',
                                 left: `${leftPercent}%`,
                                 bottom: `${bottomPercent}%`,
-                                transform: 'translate(-50%, 50%)',
+                                transform: isSelected ? 'translate(-50%, 50%) scale(1.25)' : 'translate(-50%, 50%)',
                                 backgroundColor: statusColor,
                                 color: '#fff',
                                 padding: '6px 12px',
                                 borderRadius: '20px',
                                 fontSize: '12px',
                                 fontWeight: 'bold',
-                                border: '2px solid #fff',
-                                boxShadow: '0 3px 6px rgba(0,0,0,0.25)',
+                                border: isSelected ? '3px solid #0074d9' : '2px solid #fff',
+                                boxShadow: isSelected ? '0 0 12px rgba(0,116,217,0.8)' : '0 3px 6px rgba(0,0,0,0.25)',
                                 cursor: 'pointer',
-                                zIndex: 10,
+                                zIndex: isSelected ? 20 : 10,
                                 whiteSpace: 'nowrap',
-                                transition: 'transform 0.2s ease'
+                                transition: 'all 0.2s ease'
                             }}
                             title={`${item.code} - ${item.qui}`}
                         >

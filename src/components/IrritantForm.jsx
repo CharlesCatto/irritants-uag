@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import html2pdf from 'html2pdf.js';
 
-function IrritantForm({ setActiveTab }) {
+function IrritantForm({ irritants, setIrritants, setActiveTab }) {
     // Initialisation paresseuse : exécutée une seule fois au montage
     const [formData, setFormData] = useState(() => ({
-        code: `IRR-${Math.floor(100 + Math.random() * 900)}`,
+        code: `IRR-${Math.floor(231 + Math.random() * 700)}`,
         date: new Date().toISOString().split('T')[0],
         qui: '',
         description: '',
@@ -24,10 +24,12 @@ function IrritantForm({ setActiveTab }) {
             return;
         }
 
-       const payload = {
+        // Création du nouvel objet irritant formaté pour la matrice et les recherches
+        const newIrritant = {
+            id_irritant: Date.now(),
             code: formData.code,
             date: formData.date,
-            qui: formData.qui,
+            qui: formData.qui || 'Anonyme',
             description: formData.description,
             impact: formData.impact,
             traitement: formData.traitement,
@@ -35,26 +37,14 @@ function IrritantForm({ setActiveTab }) {
             solution: formData.solution,
             statut: formData.statut,
             score_impact: formData.y,
-            score_facilite: formData.x,
-            id_utilisateur: 1
+            score_facilite: formData.x
         };
 
-        fetch('http://localhost:5001/api/irritants', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(payload)
-        })
-        .then(response => {
-            if (response.ok) {
-                alert("Fiche enregistrée sur le serveur avec succès !");
-                setActiveTab('graph');
-            } else {
-                alert("Erreur lors de l'enregistrement sur le serveur.");
-            }
-        })
-        .catch(error => console.error("Erreur réseau :", error));
+        // Ajout en live dans l'état global de l'application
+        setIrritants([newIrritant, ...irritants]);
+
+        alert("Fiche enregistrée et ajoutée au tableau avec succès !");
+        setActiveTab('graph');
     };
 
     const handleDownloadPDF = () => {

@@ -2,152 +2,143 @@ import { useState } from 'react';
 
 function IrritantSearch({ irritants }) {
     const [searchTerm, setSearchTerm] = useState('');
-    const [searchField, setSearchField] = useState('tous');
+    const [searchField, setSearchField] = useState('all'); // 'all', 'code', 'qui', 'description', 'solution'
     const [selectedStatut, setSelectedStatut] = useState('Tous');
-    const [selectedTraitement, setSelectedTraitement] = useState('Tous');
+    const [selectedImpact, setSelectedImpact] = useState('Tous');
 
-    // Filtrage dynamique multicritères avec ciblage de champ
+    // Filtrage dynamique avec ciblage par champ
     const filteredIrritants = irritants.filter(item => {
-        const search = searchTerm.toLowerCase();
-        let matchesText = true;
-
-        if (searchTerm.trim() !== '') {
-            if (searchField === 'tous') {
-                matchesText = 
-                    (item.code?.toLowerCase().includes(search)) ||
-                    (item.date?.toLowerCase().includes(search)) ||
-                    (item.qui?.toLowerCase().includes(search)) ||
-                    (item.description?.toLowerCase().includes(search)) ||
-                    (item.impact?.toLowerCase().includes(search)) ||
-                    (item.traitement?.toLowerCase().includes(search)) ||
-                    (item.prise_en_charge?.toLowerCase().includes(search)) ||
-                    (item.solution?.toLowerCase().includes(search)) ||
-                    (item.statut?.toLowerCase().includes(search));
-            } else if (searchField === 'code') {
-                matchesText = item.code?.toLowerCase().includes(search);
+        const term = searchTerm.toLowerCase();
+        
+        let matchesSearch = true;
+        if (term.trim() !== '') {
+            if (searchField === 'code') {
+                matchesSearch = item.code?.toLowerCase().includes(term);
             } else if (searchField === 'qui') {
-                matchesText = item.qui?.toLowerCase().includes(search);
+                matchesSearch = item.qui?.toLowerCase().includes(term);
             } else if (searchField === 'description') {
-                matchesText = item.description?.toLowerCase().includes(search);
-            } else if (searchField === 'traitement') {
-                matchesText = item.traitement?.toLowerCase().includes(search);
+                matchesSearch = item.description?.toLowerCase().includes(term);
+            } else if (searchField === 'solution') {
+                matchesSearch = item.solution?.toLowerCase().includes(term);
+            } else {
+                // Recherche globale par défaut
+                matchesSearch = 
+                    item.code?.toLowerCase().includes(term) ||
+                    item.description?.toLowerCase().includes(term) ||
+                    item.qui?.toLowerCase().includes(term) ||
+                    item.solution?.toLowerCase().includes(term);
             }
         }
 
         const matchesStatut = selectedStatut === 'Tous' || item.statut === selectedStatut;
-        const matchesTraitement = selectedTraitement === 'Tous' || item.traitement === selectedTraitement;
+        const matchesImpact = selectedImpact === 'Tous' || item.impact === selectedImpact;
 
-        return matchesText && matchesStatut && matchesTraitement;
+        return matchesSearch && matchesStatut && matchesImpact;
     });
 
     return (
-        <div style={{ padding: '20px', background: '#fdfdfd', borderRadius: '8px', border: '1px solid #ddd' }}>
-            <h3 style={{ color: '#007bff', marginBottom: '20px' }}>🔍 Recherche Avancée et Ciblée</h3>
+        <div style={{ maxWidth: '900px', margin: '0 auto', fontFamily: 'Arial, sans-serif' }}>
+            <h3 style={{ textAlign: 'center', color: '#1d3557', marginBottom: '20px' }}>
+                🔍 Recherche et Filtres Avancés ({filteredIrritants.length} / {irritants.length})
+            </h3>
 
-            {/* Barres de recherche et sélecteurs de filtres */}
-            <div style={{ display: 'flex', gap: '15px', marginBottom: '20px', flexWrap: 'wrap' }}>
-                <select
-                    value={searchField}
-                    onChange={(e) => setSearchField(e.target.value)}
-                    style={{ padding: '10px', fontSize: '14px', borderRadius: '4px', border: '1px solid #ccc', background: '#fff' }}
-                >
-                    <option value="tous">🔍 Tous les champs</option>
-                    <option value="code">🏷️ Numéro / Code (ex: IRR-)</option>
-                    <option value="qui">👤 Nom / Auteur</option>
-                    <option value="description">📝 Description / Mots-clés</option>
-                    <option value="traitement">⚙️ Traitement</option>
-                </select>
+            {/* Barre de filtres */}
+            <div style={{ display: 'flex', gap: '15px', marginBottom: '20px', flexWrap: 'wrap', background: '#f8f9fa', padding: '15px', borderRadius: '6px', border: '1px solid #ddd' }}>
+                
+                {/* Sélecteur de champ de recherche */}
+                <div style={{ flex: 1, minWidth: '160px' }}>
+                    <label style={{ display: 'block', fontWeight: 'bold', marginBottom: '5px', fontSize: '13px' }}>Chercher dans :</label>
+                    <select 
+                        value={searchField}
+                        onChange={e => setSearchField(e.target.value)}
+                        style={{ width: '100%', padding: '8px', boxSizing: 'border-box', borderRadius: '4px', border: '1px solid #ccc' }}
+                    >
+                        <option value="all">Partout (Global)</option>
+                        <option value="code">Code (ex: IRR-201)</option>
+                        <option value="qui">Auteur / Nom (Qui)</option>
+                        <option value="description">Description</option>
+                        <option value="solution">Solution</option>
+                    </select>
+                </div>
 
-                <input
-                    type="text"
-                    placeholder={
-                        searchField === 'code' ? "Filtrer par code (ex: IRR-201)..." :
-                        searchField === 'qui' ? "Filtrer par nom (ex: Thomas, Julie)..." :
-                        searchField === 'description' ? "Filtrer par mots-clés de description..." :
-                        "Recherche globale..."
-                    }
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    style={{ flex: 1, padding: '10px', fontSize: '14px', borderRadius: '4px', border: '1px solid #ccc' }}
-                />
+                {/* Champ de saisie du texte */}
+                <div style={{ flex: 2, minWidth: '220px' }}>
+                    <label style={{ display: 'block', fontWeight: 'bold', marginBottom: '5px', fontSize: '13px' }}>Mot-clé :</label>
+                    <input 
+                        type="text" 
+                        placeholder={
+                            searchField === 'code' ? "Ex: IRR-201..." :
+                            searchField === 'qui' ? "Ex: Mehdi, Thomas..." :
+                            searchField === 'description' ? "Ex: bacs, écran..." : "Rechercher..."
+                        }
+                        value={searchTerm}
+                        onChange={e => setSearchTerm(e.target.value)}
+                        style={{ width: '100%', padding: '8px', boxSizing: 'border-box', borderRadius: '4px', border: '1px solid #ccc' }}
+                    />
+                </div>
 
-                <select
-                    value={selectedStatut}
-                    onChange={(e) => setSelectedStatut(e.target.value)}
-                    style={{ padding: '10px', fontSize: '14px', borderRadius: '4px', border: '1px solid #ccc', background: '#fff' }}
-                >
-                    <option value="Tous">Tous les statuts</option>
-                    <option value="Non commencé">Non commencé</option>
-                    <option value="En cours">En cours</option>
-                    <option value="Terminé">Terminé</option>
-                </select>
+                <div style={{ flex: 1, minWidth: '140px' }}>
+                    <label style={{ display: 'block', fontWeight: 'bold', marginBottom: '5px', fontSize: '13px' }}>Statut :</label>
+                    <select 
+                        value={selectedStatut}
+                        onChange={e => setSelectedStatut(e.target.value)}
+                        style={{ width: '100%', padding: '8px', boxSizing: 'border-box', borderRadius: '4px', border: '1px solid #ccc' }}
+                    >
+                        <option value="Tous">Tous</option>
+                        <option value="Non commencé">Non commencé</option>
+                        <option value="En cours">En cours</option>
+                        <option value="Terminé">Terminé</option>
+                    </select>
+                </div>
 
-                <select
-                    value={selectedTraitement}
-                    onChange={(e) => setSelectedTraitement(e.target.value)}
-                    style={{ padding: '10px', fontSize: '14px', borderRadius: '4px', border: '1px solid #ccc', background: '#fff' }}
-                >
-                    <option value="Tous">Tous les traitements</option>
-                    <option value="Quick Win">Quick Win</option>
-                    <option value="Gemba Walk">Gemba Walk</option>
-                    <option value="Chantier Zone">Chantier Zone</option>
-                    <option value="Chantier Kaizen">Chantier Kaizen</option>
-                </select>
+                <div style={{ flex: 1, minWidth: '140px' }}>
+                    <label style={{ display: 'block', fontWeight: 'bold', marginBottom: '5px', fontSize: '13px' }}>Impact :</label>
+                    <select 
+                        value={selectedImpact}
+                        onChange={e => setSelectedImpact(e.target.value)}
+                        style={{ width: '100%', padding: '8px', boxSizing: 'border-box', borderRadius: '4px', border: '1px solid #ccc' }}
+                    >
+                        <option value="Tous">Tous</option>
+                        <option value="Faible">Faible</option>
+                        <option value="Moyen">Moyen</option>
+                        <option value="Élevé">Élevé</option>
+                    </select>
+                </div>
             </div>
 
-            {/* Tableau complet des résultats */}
-            <div style={{ overflowX: 'auto' }}>
-                <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '13px' }}>
-                    <thead>
-                        <tr style={{ background: '#007bff', color: '#fff' }}>
-                            <th style={{ padding: '8px', border: '1px solid #ddd' }}>Code</th>
-                            <th style={{ padding: '8px', border: '1px solid #ddd' }}>Date</th>
-                            <th style={{ padding: '8px', border: '1px solid #ddd' }}>Auteur</th>
-                            <th style={{ padding: '8px', border: '1px solid #ddd' }}>Description</th>
-                            <th style={{ padding: '8px', border: '1px solid #ddd' }}>Impact</th>
-                            <th style={{ padding: '8px', border: '1px solid #ddd' }}>Traitement</th>
-                            <th style={{ padding: '8px', border: '1px solid #ddd' }}>Prise en charge</th>
-                            <th style={{ padding: '8px', border: '1px solid #ddd' }}>Solution</th>
-                            <th style={{ padding: '8px', border: '1px solid #ddd' }}>Statut</th>
-                            <th style={{ padding: '8px', border: '1px solid #ddd' }}>Scores</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {filteredIrritants.length > 0 ? (
-                            filteredIrritants.map(item => (
-                                <tr key={item.id_irritant || item.id} style={{ borderBottom: '1px solid #ddd' }}>
-                                    <td style={{ padding: '8px', fontWeight: 'bold' }}>{item.code}</td>
-                                    <td style={{ padding: '8px' }}>{item.date}</td>
-                                    <td style={{ padding: '8px' }}>{item.qui}</td>
-                                    <td style={{ padding: '8px' }}>{item.description}</td>
-                                    <td style={{ padding: '8px' }}>{item.impact}</td>
-                                    <td style={{ padding: '8px' }}>{item.traitement}</td>
-                                    <td style={{ padding: '8px' }}>{item.prise_en_charge || '-'}</td>
-                                    <td style={{ padding: '8px' }}>{item.solution || '-'}</td>
-                                    <td style={{ padding: '8px' }}>
-                                        <span style={{
-                                            padding: '3px 6px',
-                                            borderRadius: '10px',
-                                            fontSize: '11px',
-                                            fontWeight: 'bold',
-                                            backgroundColor: item.statut === 'Terminé' ? '#2a9d8f' : item.statut === 'En cours' ? '#f5a623' : '#e63946',
-                                            color: '#fff'
-                                        }}>
-                                            {item.statut}
-                                        </span>
-                                    </td>
-                                    <td style={{ padding: '8px' }}>I: {item.score_impact} | F: {item.score_facilite}</td>
-                                </tr>
-                            ))
-                        ) : (
-                            <tr>
-                                <td colSpan="10" style={{ textAlign: 'center', padding: '20px', color: '#888' }}>
-                                    Aucun irritant ne correspond à vos critères de recherche.
-                                </td>
-                            </tr>
-                        )}
-                    </tbody>
-                </table>
+            {/* Liste des résultats */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                {filteredIrritants.length === 0 ? (
+                    <p style={{ textAlign: 'center', color: '#666', fontStyle: 'italic', padding: '20px' }}>Aucun irritant ne correspond à vos critères.</p>
+                ) : (
+                    filteredIrritants.map(item => {
+                        let statusColor = '#e63946';
+                        if (item.statut === 'En cours') statusColor = '#f5a623';
+                        if (item.statut === 'Terminé') statusColor = '#2a9d8f';
+
+                        return (
+                            <div key={item.id_irritant || item.id} style={{ background: '#fff', border: '1px solid #ddd', borderRadius: '6px', padding: '15px', boxShadow: '0 2px 4px rgba(0,0,0,0.05)' }}>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                                    <span style={{ fontWeight: 'bold', fontSize: '16px', color: '#1d3557' }}>{item.code}</span>
+                                    <span style={{ background: statusColor, color: '#fff', padding: '3px 8px', borderRadius: '12px', fontSize: '11px', fontWeight: 'bold' }}>
+                                        {item.statut}
+                                    </span>
+                                </div>
+                                <p style={{ margin: '5px 0', color: '#333' }}><strong>Description :</strong> {item.description}</p>
+                                <p style={{ margin: '5px 0', color: '#555', fontSize: '13px' }}>
+                                    <span><strong>Proposé par :</strong> {item.qui || 'Anonyme'} ({item.date})</span>
+                                    {' | '}
+                                    <span><strong>Impact :</strong> {item.impact}</span>
+                                    {' | '}
+                                    <span><strong>Traitement :</strong> {item.traitement}</span>
+                                </p>
+                                {item.solution && (
+                                    <p style={{ margin: '5px 0', color: '#2a9d8f', fontSize: '13px' }}><strong>Solution :</strong> {item.solution}</p>
+                                )}
+                            </div>
+                        );
+                    })
+                )}
             </div>
         </div>
     );
