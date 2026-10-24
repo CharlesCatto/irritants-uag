@@ -2,7 +2,7 @@ name: Déploiement GitHub Pages Automatique
 
 on:
   push:
-    branches: ["main"]
+    branches: ["demo-live"]
 
 permissions:
   contents: read

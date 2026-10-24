@@ -43,68 +43,72 @@ function IrritantSearch({ irritants }) {
             </h3>
 
             {/* Barre de filtres */}
-            <div style={{ display: 'flex', gap: '15px', marginBottom: '20px', flexWrap: 'wrap', background: '#f8f9fa', padding: '15px', borderRadius: '6px', border: '1px solid #ddd' }}>
-                
-                {/* Sélecteur de champ de recherche */}
-                <div style={{ flex: 1, minWidth: '160px' }}>
-                    <label style={{ display: 'block', fontWeight: 'bold', marginBottom: '5px', fontSize: '13px' }}>Chercher dans :</label>
-                    <select 
-                        value={searchField}
-                        onChange={e => setSearchField(e.target.value)}
-                        style={{ width: '100%', padding: '8px', boxSizing: 'border-box', borderRadius: '4px', border: '1px solid #ccc' }}
-                    >
-                        <option value="all">Partout (Global)</option>
-                        <option value="code">Code (ex: IRR-201)</option>
-                        <option value="qui">Auteur / Nom (Qui)</option>
-                        <option value="description">Description</option>
-                        <option value="solution">Solution</option>
-                    </select>
-                </div>
+<div style={{ display: 'flex', gap: '15px', marginBottom: '20px', flexWrap: 'wrap', background: '#f8f9fa', padding: '15px', borderRadius: '6px', border: '1px solid #ddd' }}>
+    
+    {/* Sélecteur de champ de recherche */}
+    <div style={{ flex: 1, minWidth: '160px' }}>
+        <label htmlFor="search-field-select" style={{ display: 'block', fontWeight: 'bold', marginBottom: '5px', fontSize: '13px' }}>Chercher dans :</label>
+        <select 
+            id="search-field-select"
+            value={searchField}
+            onChange={e => setSearchField(e.target.value)}
+            style={{ width: '100%', padding: '8px', boxSizing: 'border-box', borderRadius: '4px', border: '1px solid #ccc' }}
+        >
+            <option value="all">Partout (Global)</option>
+            <option value="code">Code (ex: IRR-201)</option>
+            <option value="qui">Auteur / Nom (Qui)</option>
+            <option value="description">Description</option>
+            <option value="solution">Solution</option>
+        </select>
+    </div>
 
-                {/* Champ de saisie du texte */}
-                <div style={{ flex: 2, minWidth: '220px' }}>
-                    <label style={{ display: 'block', fontWeight: 'bold', marginBottom: '5px', fontSize: '13px' }}>Mot-clé :</label>
-                    <input 
-                        type="text" 
-                        placeholder={
-                            searchField === 'code' ? "Ex: IRR-201..." :
-                            searchField === 'qui' ? "Ex: Mehdi, Thomas..." :
-                            searchField === 'description' ? "Ex: bacs, écran..." : "Rechercher..."
-                        }
-                        value={searchTerm}
-                        onChange={e => setSearchTerm(e.target.value)}
-                        style={{ width: '100%', padding: '8px', boxSizing: 'border-box', borderRadius: '4px', border: '1px solid #ccc' }}
-                    />
-                </div>
+    {/* Champ de saisie du texte */}
+    <div style={{ flex: 2, minWidth: '220px' }}>
+        <label htmlFor="search-keyword-input" style={{ display: 'block', fontWeight: 'bold', marginBottom: '5px', fontSize: '13px' }}>Mot-clé :</label>
+        <input 
+            id="search-keyword-input"
+            type="text" 
+            placeholder={
+                searchField === 'code' ? "Ex: IRR-201..." :
+                searchField === 'qui' ? "Ex: Mehdi, Thomas..." :
+                searchField === 'description' ? "Ex: bacs, écran..." : "Rechercher..."
+            }
+            value={searchTerm}
+            onChange={e => setSearchTerm(e.target.value)}
+            style={{ width: '100%', padding: '8px', boxSizing: 'border-box', borderRadius: '4px', border: '1px solid #ccc' }}
+        />
+    </div>
 
-                <div style={{ flex: 1, minWidth: '140px' }}>
-                    <label style={{ display: 'block', fontWeight: 'bold', marginBottom: '5px', fontSize: '13px' }}>Statut :</label>
-                    <select 
-                        value={selectedStatut}
-                        onChange={e => setSelectedStatut(e.target.value)}
-                        style={{ width: '100%', padding: '8px', boxSizing: 'border-box', borderRadius: '4px', border: '1px solid #ccc' }}
-                    >
-                        <option value="Tous">Tous</option>
-                        <option value="Non commencé">Non commencé</option>
-                        <option value="En cours">En cours</option>
-                        <option value="Terminé">Terminé</option>
-                    </select>
-                </div>
+    <div style={{ flex: 1, minWidth: '140px' }}>
+        <label htmlFor="filter-statut-select" style={{ display: 'block', fontWeight: 'bold', marginBottom: '5px', fontSize: '13px' }}>Statut :</label>
+        <select 
+            id="filter-statut-select"
+            value={selectedStatut}
+            onChange={e => setSelectedStatut(e.target.value)}
+            style={{ width: '100%', padding: '8px', boxSizing: 'border-box', borderRadius: '4px', border: '1px solid #ccc' }}
+        >
+            <option value="Tous">Tous</option>
+            <option value="Non commencé">Non commencé</option>
+            <option value="En cours">En cours</option>
+            <option value="Terminé">Terminé</option>
+        </select>
+    </div>
 
-                <div style={{ flex: 1, minWidth: '140px' }}>
-                    <label style={{ display: 'block', fontWeight: 'bold', marginBottom: '5px', fontSize: '13px' }}>Impact :</label>
-                    <select 
-                        value={selectedImpact}
-                        onChange={e => setSelectedImpact(e.target.value)}
-                        style={{ width: '100%', padding: '8px', boxSizing: 'border-box', borderRadius: '4px', border: '1px solid #ccc' }}
-                    >
-                        <option value="Tous">Tous</option>
-                        <option value="Faible">Faible</option>
-                        <option value="Moyen">Moyen</option>
-                        <option value="Élevé">Élevé</option>
-                    </select>
-                </div>
-            </div>
+    <div style={{ flex: 1, minWidth: '140px' }}>
+        <label htmlFor="filter-impact-select" style={{ display: 'block', fontWeight: 'bold', marginBottom: '5px', fontSize: '13px' }}>Impact :</label>
+        <select 
+            id="filter-impact-select"
+            value={selectedImpact}
+            onChange={e => setSelectedImpact(e.target.value)}
+            style={{ width: '100%', padding: '8px', boxSizing: 'border-box', borderRadius: '4px', border: '1px solid #ccc' }}
+        >
+            <option value="Tous">Tous</option>
+            <option value="Faible">Faible</option>
+            <option value="Moyen">Moyen</option>
+            <option value="Élevé">Élevé</option>
+        </select>
+    </div>
+</div>
 
             {/* Liste des résultats */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
